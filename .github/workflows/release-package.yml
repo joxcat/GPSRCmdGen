@@ -86,7 +86,7 @@ jobs:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Extract metadata (tags, labels) for Docker GPSR
+    - name: Extract metadata (tags, labels) for Docker EGPSR
       id: meta
       uses: docker/metadata-action@v5
       with:
