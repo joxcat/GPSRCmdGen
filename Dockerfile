@@ -1,4 +1,4 @@
-FROM mono:6.12
+FROM mono:6.12 as builder
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
@@ -11,17 +11,12 @@ WORKDIR /build
 # Build
 RUN make release
 
-# Pack for Linux
-RUN for file in bin/Release/*.exe; do \
-      mkbundle --simple --static --nodeps \
-        -L "$PWD/bin/Release" \
-        -z "$file" bin/Release/*.dll \
-        -o "$(echo $file | sed 's|.exe|-linux-x64|')" \
-        --machine-config /etc/mono/4.5/machine.config \
-        --config /etc/mono/config \
-    ; done
+FROM mono:6.12 as gpsr
+WORKDIR /app
+COPY --from=builder /build/bin/Release/GPSRCmdGen.exe /build/bin/Release/*.dll /app/
+CMD [ "mono", "/app/GPSRCmdGen.exe" ]
 
-# Rename for Windows
-RUN for file in bin/Release/*.exe; do \
-      mv "$file" "$(echo $file | sed -E 's|.exe|-windows.exe|')" \
-    ; done
+FROM mono:6.12 as egpsr
+WORKDIR /app
+COPY --from=builder /build/bin/Release/EGPSRCmdGen.exe /build/bin/Release/*.dll /app/
+CMD [ "mono", "/app/EGPSRCmdGen.exe" ]
