@@ -1,0 +1,11 @@
+# Ignore everything in the root
+/*
+
+# Add project files to the context
+!LICENSE
+!Makefile
+!GPSRCmdGen.sln
+!GPSRCmdGen/
+!EGPSRCmdGen/
+!CommonFiles/
+!CommandGenerator/
